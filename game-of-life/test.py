@@ -77,10 +77,14 @@ from p5 import *
 gray = 0
 
 def setup():
-   size(100, 100)
+   size(400, 400)
+#    background(255)
+
 
 def draw():
-   background(gray)
+    background(0)
+    rect
+#    background(gray)
 
 def mouse_pressed():
    global gray

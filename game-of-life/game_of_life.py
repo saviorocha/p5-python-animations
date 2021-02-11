@@ -1,12 +1,15 @@
-import numpy as np
-from p5 import *
-import random
 from cell import Cell
+from p5 import *
+import numpy as np
+import random
+import copy
+
 """
     Baseado no código de Daniel Shiffman
     https://www.youtube.com/watch?v=FWSR_7kZuYg
 """
 
+running = False
 resolution = 40
 width = 400
 height = 400
@@ -22,17 +25,14 @@ def make_matrix(cols, rows):
             cell_row.append(cell)
         matrix = np.vstack( (matrix, cell_row) )
     return matrix
-current_grid = next_grid = make_matrix(cols, rows)
+current_grid = make_matrix(cols, rows)
+next_grid = make_matrix(cols, rows)
 
 def setup():
     size(400, 400)
 
 def draw():
-    global current_grid, next_grid, cols, rows
-
-    # next_grid = np.zeros( (cols, rows) )
-    # next_grid = np.empty([0, rows])
-
+    global current_grid, next_grid, cols, rows, running
     background(0)
 
     # desenha o grid
@@ -44,17 +44,18 @@ def draw():
                 fill(255)
                 rect((x, y), resolution, resolution)
                 # circle((x, y), resolution)
-
-            next_grid[i][j].state = calculate_new_grid(current_grid, i, j)
-            
-    # atualiza o grid para próxima iteração
-    current_grid = next_grid
+            if running:
+                next_grid[i][j].state = calculate_new_grid(current_grid, i, j)
+ 
+    if running:    
+        # atualiza o grid para próxima iteração
+        current_grid = copy.deepcopy(next_grid)
 
 # cria o grid do estado seguinte
 def calculate_new_grid(current_grid, i, j):
     cell_state = current_grid[i][j].state
     neighbors_sum = count_neighbors(current_grid, i, j)
-
+    print(current_grid[0][0].state)
     # regras do jogo da vida
     if cell_state == 0 and neighbors_sum == 3:
         return 1
@@ -66,6 +67,7 @@ def calculate_new_grid(current_grid, i, j):
 # soma todos os vizinhos de uma celula, excluindo ela propria
 def count_neighbors(grid, x, y):
     sum = 0
+
     for i in range(-1, 2):
         for j in range(-1, 2):
             if i != x and j != y:
@@ -73,9 +75,25 @@ def count_neighbors(grid, x, y):
                 col = (x + i + cols) % cols 
                 row = (y + j + rows) % rows
 
-                sum += grid[col][row].state
+            sum += grid[col][row].state
+            # print(col, row, grid[col][row].state)
+    # sum -= grid[x][y].state
+    # print(x, y, sum)
     return sum
 
+def mouse_pressed():
+    i = mouse_x // resolution
+    j = mouse_y // resolution
+    cell_to_change = current_grid[i][j]
+    if mouse_button == 'LEFT':
+        cell_to_change.state = 1
+    elif mouse_button == 'RIGHT':
+        cell_to_change.state = 0
+
+def key_pressed():
+    global running
+    if key == 'R' or key == 'r':
+        running = not running
 
 if __name__ == '__main__':
     run()
