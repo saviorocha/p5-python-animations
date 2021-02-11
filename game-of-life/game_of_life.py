@@ -5,18 +5,20 @@ import random
 import copy
 
 """
-    Baseado no código de Daniel Shiffman
+    Baseado no código de Daniel Shiffman :)
     https://www.youtube.com/watch?v=FWSR_7kZuYg
 """
 
 running = False
-resolution = 40
+resolution = 20
 width = 400
 height = 400
 cols = width // resolution
 rows = height // resolution
 
 def make_matrix(cols, rows):
+    """Cria a matriz do grid
+    """
     matrix = np.empty([0, rows])
     for i in range(cols):
         cell_row = []
@@ -51,11 +53,11 @@ def draw():
         # atualiza o grid para próxima iteração
         current_grid = copy.deepcopy(next_grid)
 
-# cria o grid do estado seguinte
 def calculate_new_grid(current_grid, i, j):
+    """Cria o grid do estado seguinte
+    """
     cell_state = current_grid[i][j].state
     neighbors_sum = count_neighbors(current_grid, i, j)
-    print(current_grid[0][0].state)
     # regras do jogo da vida
     if cell_state == 0 and neighbors_sum == 3:
         return 1
@@ -64,21 +66,20 @@ def calculate_new_grid(current_grid, i, j):
     else:
         return cell_state
                   
-# soma todos os vizinhos de uma celula, excluindo ela propria
 def count_neighbors(grid, x, y):
+    """Soma todos os vizinhos de uma celula, excluindo ela propria
+    """
     sum = 0
 
     for i in range(-1, 2):
         for j in range(-1, 2):
-            if i != x and j != y:
-                # usa-se o módulo por causa das celulas nas bordas
-                col = (x + i + cols) % cols 
-                row = (y + j + rows) % rows
+            # usa-se o módulo por causa das celulas nas bordas
+            # para que contabilize a celula da outra extremidade
+            col = (x + i + cols) % cols 
+            row = (y + j + rows) % rows
 
             sum += grid[col][row].state
-            # print(col, row, grid[col][row].state)
-    # sum -= grid[x][y].state
-    # print(x, y, sum)
+    sum -= grid[x][y].state
     return sum
 
 def mouse_pressed():
