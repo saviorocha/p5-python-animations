@@ -5,7 +5,7 @@ import random
 import copy
 
 """
-    Baseado no código de Daniel Shiffman :)
+    Baseado no código de Daniel Shiffman
     https://www.youtube.com/watch?v=FWSR_7kZuYg
 """
 
@@ -17,8 +17,6 @@ cols = width // resolution
 rows = height // resolution
 
 def make_matrix(cols, rows):
-    """Cria a matriz do grid
-    """
     matrix = np.empty([0, rows])
     for i in range(cols):
         cell_row = []
@@ -31,10 +29,12 @@ current_grid = make_matrix(cols, rows)
 next_grid = make_matrix(cols, rows)
 
 def setup():
-    size(400, 400)
+    size(400, 500)
 
 def draw():
     global current_grid, next_grid, cols, rows, running
+    ubuntu_font = load_font('./fonts/ubuntu.regular.ttf')
+    text_font(ubuntu_font)
     background(0)
 
     # desenha o grid
@@ -52,10 +52,16 @@ def draw():
     if running:    
         # atualiza o grid para próxima iteração
         current_grid = copy.deepcopy(next_grid)
+    text_size(16)
+    fill(50)
+    rect((0, 400), 400, 100)
+    fill(255)
+    text('Right click to add new cells and left click to remove cells', (0, 400))
+    text('Press "r" to toggle the animation', (0, 423))
+    text('Have fun :)', (0, 445))
 
+# cria o grid do estado seguinte
 def calculate_new_grid(current_grid, i, j):
-    """Cria o grid do estado seguinte
-    """
     cell_state = current_grid[i][j].state
     neighbors_sum = count_neighbors(current_grid, i, j)
     # regras do jogo da vida
@@ -66,9 +72,8 @@ def calculate_new_grid(current_grid, i, j):
     else:
         return cell_state
                   
+# soma todos os vizinhos de uma celula, excluindo ela propria
 def count_neighbors(grid, x, y):
-    """Soma todos os vizinhos de uma celula, excluindo ela propria
-    """
     sum = 0
 
     for i in range(-1, 2):
@@ -85,11 +90,14 @@ def count_neighbors(grid, x, y):
 def mouse_pressed():
     i = mouse_x // resolution
     j = mouse_y // resolution
-    cell_to_change = current_grid[i][j]
-    if mouse_button == 'LEFT':
-        cell_to_change.state = 1
-    elif mouse_button == 'RIGHT':
-        cell_to_change.state = 0
+    try:
+        cell_to_change = current_grid[i][j]
+        if mouse_button == 'LEFT':
+            cell_to_change.state = 1
+        elif mouse_button == 'RIGHT':
+            cell_to_change.state = 0
+    except IndexError:
+        pass
 
 def key_pressed():
     global running
