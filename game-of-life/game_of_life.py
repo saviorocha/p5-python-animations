@@ -56,7 +56,7 @@ def draw():
     fill(50)
     rect((0, 400), 400, 100)
     fill(255)
-    text('Right click to add new cells and left click to remove cells', (0, 400))
+    text('Left click to add new cells and right click to remove cells', (0, 400))
     text('Press "r" to toggle the animation', (0, 423))
     text('Have fun :)', (0, 445))
 
